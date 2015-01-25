@@ -11,6 +11,7 @@
     var dates = dataset.map(function(datum) {
       return toDate(datum.month)
     })
+    var total = counts.length
 
     var countExtent = d3.extent(counts)
       , dateExtent  = d3.extent(dates)
@@ -30,15 +31,24 @@
       .attr('data-count', function(datum) { return +datum.count })
       .attr('data-month', function(datum) { return datum.month })
       .attr('class', function(datum) { return d3.time.format('%b')(toDate(datum.month)) })
-      .attr('height', function(datum) { return yscale(datum.count) })
       .attr('transform', function(datum, index) {
-        return 'translate(' + xscale(toDate(datum.month)) + ',' + (380 - yscale(datum.count)) + ')'
+        return 'translate(' + xscale(toDate(datum.month)) + ',' + 380 + ')'
+      })
+      .attr('height', '0')
+      .transition()
+      .each('end', function(datum, index) {
+        var x = xscale(toDate(datum.month))
+          , y = 380 - yscale(datum.count)
+
+        return d3.select(this)
+          .transition().ease('back-out').delay((total - index) * 4).duration(1000)
+          .attr('transform', 'translate(' + x + ',' + y + ')')
+          .attr('height', yscale(datum.count))
       })
 
     d3.select('svg').append('g')
       .attr('class', 'axis')
       .attr('transform', 'translate(0,380)')
-      .text('x-axis yo')
       .call(d3.svg.axis().ticks(5).orient('bottom').scale(xscale))
 
     var showTooltip = function(datum) {
