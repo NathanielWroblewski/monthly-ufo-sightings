@@ -1,6 +1,6 @@
 !function() {
 
-  d3.csv('/public/datasets/sightings.csv', function(dataset) {
+  d3.csv('/monthly-ufo-sightings/public/datasets/sightings.csv', function(dataset) {
     var toDate = function(string) {
       return d3.time.format('%m/%Y').parse(string)
     }
